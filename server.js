@@ -8,19 +8,6 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-
-var test_data = {
-  name: "Jon Snow",
-  github_link: "https://github.com/tlaine1441/",
-  github_profile_image: "https://avatars2.githubusercontent.com/u/24639898?v=3&s=460",
-  current_city: "Denver",
-  pets: [ 
-    { name: 'Arya Stark', relationship: 'sister' }, 
-    { name: 'Bran Stark', relationship: 'brother' }
-  ]
-}
-
 /************
  * DATABASE *
  ************/
@@ -96,23 +83,39 @@ app.get('/api', function api_index(req, res) {
       },
       {
         method: "GET",
-        path: "/api/projects/:_id",
-        description: "Allows you to return a specific project by project:_id"
+        path: "/api/projects/:id",
+        description: "Allows you to return a single specific project by project:_id"
+      },
+      {
+        method: "PUT",
+        path: "/api/projects/:id",
+        description: "Allows you to update a single specific project by project:_id",
+        example_body: {
+            "name": "WalkawalkaFLames",
+            "type": "fullstack",
+            "github_link": "URL",
+            "status": "complete"
+        }
+      },
+      {
+        method: "DELETE",
+        path: "/api/projects/:id",
+        description: "Allows you to delete a single specific project by project:_id"
       }
     ]
   })
 });
 
 app.get('/api/profile', function profile_index(req, res) {
-    db.Profile.find({}, function(err, books) {
+    db.Profile.find({}, function(err, profiles) {
       if (err) { return console.log("index error: " + err); }
-      res.json(books);
+      res.json(profiles);
   });
 });
 
-app.post('/api/projects/:_id', function (req, res) {
+app.post('/api/projects/:id', function (req, res) {
   var profileId = req.params.id;
-  db.Profile.findOne({_id: req.params._id })
+  db.Profile.findOne({_id: req.params.id })
     .exec(function(err, foundProfile) {
       console.log(foundProfile);
       if (err) {
@@ -188,16 +191,26 @@ app.put('/api/projects/:id', function (req, res) {
          profile.projects[index] = update;
          profile.save();
          res.json({ message: {updated_profile: profile.projects[index]}});
-        } else {
-            return
         }
-
       });
     });
   });
 });
 
-
+app.delete('/api/projects/:id', function (req, res) {
+  var projectId = req.params.id;
+  db.Profile.find({}, function(err, profiles){
+    profiles.forEach(function(profile){
+      profile.projects.forEach(function(project, index){
+        if(project._id == projectId) {
+          profile.projects.splice(index, 1);
+          profile.save();
+          res.json({message: ("Deleted " + project._id) })
+        }
+      });
+    });
+  });
+});
 /**********
  * SERVER *
  **********/
