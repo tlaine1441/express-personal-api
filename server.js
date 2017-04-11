@@ -77,9 +77,8 @@ app.get('/api', function api_index(req, res) {
         description: "Allows you to post a project to a profile by profile:_id",
         example: {
           url: "https://warm-gorge-71439.herokuapp.com/api/projects/profile/:_id",
-          url_example: "https://warm-gorge-71439.herokuapp.com/api/projects/58ec8320b86fc7001106869a"
+          url_example: "https://warm-gorge-71439.herokuapp.com/api/projects/58ec8320b86fc7001106869a",
           _id: "profile.id = 58ec8320b86fc7001106869a"
-
         }
       },
       {
