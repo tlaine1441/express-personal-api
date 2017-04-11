@@ -113,6 +113,15 @@ app.get('/api/profile', function profile_index(req, res) {
   });
 });
 
+app.post('/api/profile', function profile_index(req, res) {
+   db.Profile.create(req.body, function(err, profile){
+    if (err){
+      return console.log("Error:", err);
+    }
+    console.log("Created new profile", profile._id)
+  });
+});
+
 app.post('/api/projects/:id', function (req, res) {
   var profileId = req.params.id;
   db.Profile.findOne({_id: req.params.id })
